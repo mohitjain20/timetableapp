@@ -165,8 +165,64 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    
-    
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item= menu.findItem(R.id.notification);
+        if(isNotificationOn){
+            item.setIcon(R.drawable.ic_star_black_24dp);
+        }
+        else
+            item.setIcon(R.drawable.ic_star_border_black_24dp);
+        return true;
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.notification) {
+
+            if(!item.isChecked()){
+                item.setChecked(true);
+                item.setIcon(R.drawable.ic_star_black_24dp);
+                isNotificationOn=true;
+                Intent serviceIntent=new Intent("com.example.harshgupta.dontmissaclass.MyService");
+                serviceIntent.setPackage(getPackageName());
+                this.startService(serviceIntent);
+                //scheduleNotification(getNotification("Review Today's Attendence"),1);
+
+
+            }
+            else{
+                item.setChecked(false);
+                item.setIcon(R.drawable.ic_star_border_black_24dp);
+                isNotificationOn=false;
+                Intent serviceIntent=new Intent("com.example.harshgupta.dontmissaclass.MyService");
+                serviceIntent.setPackage(getPackageName());
+                this.stopService(serviceIntent);
+                //scheduleNotification(getNotification("Review Today's Attendence"),0);
+            }
+
+            editor= sharedPref.edit();
+            editor.putBoolean("NotificationStatus", isNotificationOn);
+            editor.apply();
+            return true;
+        }
+
+        return false;
+    }
+
+
 
 
     @Override
